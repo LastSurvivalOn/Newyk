@@ -119,11 +119,11 @@ class NewykParser:
 
 
 
-b = NewykParser()
-a = b("https://www.bbc.com/news")
-for i in a:
-    print(i)
-    print("\n\n")
+# b = NewykParser()
+# a = b("https://www.bbc.com/news")
+# for i in a:
+#     print(i)
+#     print("\n\n")
 
 
 
