@@ -17,5 +17,6 @@ RUN apt update && \
     
 COPY ./api /NewykBot/api
 COPY ./sources /NewykBot/sources
+COPY ./models /NewykBot/models
 
 CMD ["uvicorn", "api.app:app", "--host", "0.0.0.0", "--port", "9090"]

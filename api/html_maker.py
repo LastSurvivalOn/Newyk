@@ -3,6 +3,8 @@ from api.css_schema import html_start, html_end
 import random
 from datetime import datetime
 import os
+from pathlib import Path
+from api.config import temporary_files_path
 
 class NewykHTMLMaker:
     def __init__(self) -> None:
@@ -46,10 +48,12 @@ class NewykHTMLMaker:
     def _write_html_(self, html: str, file_name: str = "news_articles.html", temp: bool = False) -> None | str:
         try:
             if temp:
+                directory = Path(temporary_files_path)
+                directory.mkdir(parents=True, exist_ok=True)
                 random_number = random.randint(1000000, 9999999)
                 current_time = datetime.now()
                 formatted_time = current_time.strftime("%Y%m%d%H%M%S")
-                file_name = f"sources/temp_{formatted_time}_{random_number}.html"
+                file_name = f"{temporary_files_path}temp_{formatted_time}_{random_number}.html"
                 with open(file_name, "w", encoding="utf-8") as output_file:
                     output_file.write(html)
                 return file_name

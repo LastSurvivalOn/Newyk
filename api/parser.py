@@ -116,7 +116,7 @@ class NewykParser:
             for element in text_elements:
                 text.append(element.text)
             text_str = "".join(text)
-            
+            text_str = text_str.replace("\"", "'").strip()
             try:
                 imgs = article.find_all(image_tag, {image_attribute: image_value})
             except:
