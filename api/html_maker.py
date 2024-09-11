@@ -1,5 +1,8 @@
 import json
-from css_schema import html_start, html_end
+from api.css_schema import html_start, html_end
+import random
+from datetime import datetime
+import os
 
 class NewykHTMLMaker:
     def __init__(self) -> None:
@@ -40,15 +43,29 @@ class NewykHTMLMaker:
         except Exception as e:
             raise Exception(f"Error with creating html text: {str(e)}")
 
-    def _write_html_(self, html: str, file_name: str = "news_articles.html") -> None:
+    def _write_html_(self, html: str, file_name: str = "news_articles.html", temp: bool = False) -> None | str:
         try:
-            with open(file_name, "w", encoding="utf-8") as output_file:
-                output_file.write(html)
+            if temp:
+                random_number = random.randint(1000000, 9999999)
+                current_time = datetime.now()
+                formatted_time = current_time.strftime("%Y%m%d%H%M%S")
+                file_name = f"sources/temp_{formatted_time}_{random_number}.html"
+                with open(file_name, "w", encoding="utf-8") as output_file:
+                    output_file.write(html)
+                return file_name
+            else:
+                with open(file_name, "w", encoding="utf-8") as output_file:
+                    output_file.write(html)
         except Exception as e:
             raise Exception(f"Error with writing html file: {str(e)}")
             
+    def _remove_file_(self, file_name: str) -> None:
+        try:
+            os.remove(file_name)
+        except Exception as e:
+            raise Exception(f"Error with removing file: {str(e)}")
 
-    def __call__(self, data: list[dict[str, str|list[tuple[str, str]]]] | str, save: bool = True, file_name: str = "news_articles.html") -> str | dict[str, str]:
+    def __call__(self, data: list[dict[str, str|list[tuple[str, str]]]] | str, save: bool = True, file_name: str = "news_articles.html", temp: bool = False) -> str | dict[str, str]:
         try:
             if type(data) == str:
                 try:
@@ -64,7 +81,8 @@ class NewykHTMLMaker:
                 raise Exception("Data type is not valid")
             html = self._create_html_(remaked_data)
             if save:
-                self._write_html_(html, file_name)
+                response = self._write_html_(html, file_name, temp)
+                if response: return response
             return html
         except Exception as e:
             return {"Error" : str(e)}
