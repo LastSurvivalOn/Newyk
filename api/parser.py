@@ -123,7 +123,7 @@ class NewykParser:
                 raise Exception(f"Error with getting images of new: {url}")
             
             for img in imgs:
-                images.append((img.get("src"), img.get("alt")))
+                images.append((img.get("src"), img.get("alt").replace("Getty Images", "").strip()))
             return {"title": title, "text": text_str, "images": images, "url": url}
         except Exception as e:
             raise Exception(f"Error with getting new data: {str(e)}")
@@ -141,8 +141,6 @@ class NewykParser:
             return list_of_data
         except Exception as e:
             return {"Error" : str(e)}
-
-
 
 
 
