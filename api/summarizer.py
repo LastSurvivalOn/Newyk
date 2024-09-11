@@ -1,5 +1,6 @@
 from transformers import AutoTokenizer, AutoModelForSeq2SeqLM
 from api.config import summarizer_model_path, summarizer_model_name
+from pathlib import Path
 
 class NewykSummarizer:
     def __init__(self):
@@ -19,7 +20,9 @@ class NewykSummarizer:
             self.model = AutoModelForSeq2SeqLM.from_pretrained(summarizer_model_name) 
         except Exception as e:
             return {"Error": f"Error with downloading summarizer: {str(e)}"}
-        try:       
+        try:
+            directory = Path(save_directory)
+            directory.mkdir(parents=True, exist_ok=True)
             self.tokenizer.save_pretrained(save_directory)
             self.model.save_pretrained(save_directory)
         except Exception as e:
