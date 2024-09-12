@@ -38,4 +38,13 @@ def get_summarized_text(text: str) -> dict:
     response = response["summary"]
     return response
 
+@bot.message_handler(commands=['get_news'])
+def get_news_handler(message):
+    url = f"{NEWYK_API_URL}/get_news_html/"
+    params = {"url": "https://www.bbc.com/"}
+    response = requests.post(url, json=params)
+    bot.send_document(message.chat.id, response.content, visible_file_name="Last News.html")
+    
+
+
 bot.infinity_polling()
