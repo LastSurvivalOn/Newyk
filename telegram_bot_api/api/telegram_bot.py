@@ -49,11 +49,11 @@ def get_news_handler(message):
 
 @bot.message_handler(commands=['today_news'])
 def today_news_handler(message):
-    # url = f"{NEWYK_API_URL}/get_short_news/"
-    # params = {"url": "https://www.bbc.com/"}
-    # response = requests.post(url, json=params)
-    with open("telegram_bot_api/news.json", "r", encoding="utf-8") as file:
-        response = json.load(file)
+    url = f"{NEWYK_API_URL}/get_short_news/"
+    params = {"url": "https://www.bbc.com/"}
+    response = requests.post(url, json=params)
+    # with open("telegram_bot_api/news.json", "r", encoding="utf-8") as file:
+    #     response = json.load(file)
     for new in response['news']:
         title = new["title"]
         text = new["text"]
