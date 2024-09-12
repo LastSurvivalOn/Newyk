@@ -75,7 +75,7 @@ class NewykParser:
         except Exception as e:
             raise Exception(f"Error with filtering news: {str(e)}")
     
-    def _get_new_data_(self, url: str) -> dict[str, str|list[tuple[str, str]]]:
+    def _get_new_data_(self, url: str) -> dict[str, str|list[tuple[str, str]]]|None:
         try:
             images = []
             response = self._get_data_(url)
@@ -105,7 +105,8 @@ class NewykParser:
             try:
                 title = article.find(title_tag, {title_attribute: title_value}).text
             except:
-                raise Exception(f"Error with getting title of new: {url}")
+                return None
+                #raise Exception(f"Error with getting title of new: {url}")
             
             try:
                 text_elements = article.find_all(text_tag, {text_attribute: text_value})

@@ -6,6 +6,7 @@ from api.schemas import NewykTodayNewsResponse as NewykTodayNewsResponse
 from api.schemas import NewykSummarizerRequest as NewykSummarizerRequest
 from api.schemas import NewykSummarizerResponse as NewykSummarizerResponse
 from api.summarizer import NewykSummarizer as NewykSummarizer
+from api.schemas import NewykHTMLMakerResponse as NewykHTMLMakerResponse
 from fastapi.responses import FileResponse
 
 app = FastAPI()
@@ -28,9 +29,11 @@ async def get_news(request: NewykTodayNewsRequest) -> NewykTodayNewsResponse:
     return NewykTodayNewsResponse(news=response)
 
 @app.post("/get_news_html/")
-async def get_news_html(request: NewykTodayNewsRequest, background_tasks: BackgroundTasks) -> FileResponse:
+async def get_news_html(request: NewykTodayNewsRequest, background_tasks: BackgroundTasks):
     response = parser(request.url)
     path_to_file_download = html_maker(response, save=True, temp=True)
+    if type(path_to_file_download)==dict:
+        return NewykHTMLMakerResponse(html=path_to_file_download)
     background_tasks.add_task(html_maker._remove_file_, path_to_file_download)
     return FileResponse(path=path_to_file_download, filename='Latest news.html', media_type='text/html')
 

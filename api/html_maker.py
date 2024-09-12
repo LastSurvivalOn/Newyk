@@ -14,30 +14,32 @@ class NewykHTMLMaker:
         try:
             html = ""
             html += html_start
+            if "Error" in data:
+                raise Exception(data["Error"])
+            for article in data["news"]:
+                if article:
+                    title = article.get("title", "No Title")
+                    text = article.get("text", "")
+                    images = article.get("images", [])
+                    url = article.get("url", "#")
 
-            for article in data['news']:
-                title = article.get("title", "No Title")
-                text = article.get("text", "")
-                images = article.get("images", [])
-                url = article.get("url", "#")
+                    article_html = f"""
+                    <div class="article">
+                        <h2 style="text-align: center;">{title}</h2>
+                        <p>{text}</p>
+                    """
 
-                article_html = f"""
-                <div class="article">
-                    <h2 style="text-align: center;">{title}</h2>
-                    <p>{text}</p>
-                """
+                    for image in images:
+                        img_src = image[0]
+                        img_caption = image[1] if len(image) > 1 else ""
+                        article_html += f'<img src="{img_src}" alt="{img_caption}">'
+                        if img_caption:
+                            article_html += f'<p class="img-caption"><em>{img_caption}</em></p>'
 
-                for image in images:
-                    img_src = image[0]
-                    img_caption = image[1] if len(image) > 1 else ""
-                    article_html += f'<img src="{img_src}" alt="{img_caption}">'
-                    if img_caption:
-                        article_html += f'<p class="img-caption"><em>{img_caption}</em></p>'
+                    article_html += f'<p style="text-align: center;"><a href="{url}" target="_blank" class="Read-more">Read more</a></p>'
+                    article_html += "</div>"
 
-                article_html += f'<p style="text-align: center;"><a href="{url}" target="_blank" class="Read-more">Read more</a></p>'
-                article_html += "</div>"
-
-                html += article_html
+                    html += article_html
 
             html += html_end
 

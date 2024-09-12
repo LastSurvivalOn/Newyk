@@ -1,4 +1,5 @@
 from pydantic import BaseModel
+from fastapi.responses import FileResponse
 
 class NewykTodayNewsRequest(BaseModel):
     url: str
@@ -11,3 +12,6 @@ class NewykSummarizerRequest(BaseModel):
 
 class NewykSummarizerResponse(BaseModel):
     summary: str|dict[str, str]
+    
+class NewykHTMLMakerResponse(BaseModel):
+    html: dict[str, str]
