@@ -15,3 +15,9 @@ class NewykSummarizerResponse(BaseModel):
     
 class NewykHTMLMakerResponse(BaseModel):
     html: dict[str, str]
+    
+class NewykSentimentAnalyzerRequest(BaseModel):
+    text: str
+    
+class NewykSentimentAnalyzerResponse(BaseModel):
+    sentiment: dict[str, float] | dict[str, str]

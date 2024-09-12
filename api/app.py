@@ -7,6 +7,9 @@ from api.schemas import NewykSummarizerRequest as NewykSummarizerRequest
 from api.schemas import NewykSummarizerResponse as NewykSummarizerResponse
 from api.summarizer import NewykSummarizer as NewykSummarizer
 from api.schemas import NewykHTMLMakerResponse as NewykHTMLMakerResponse
+from api.schemas import NewykSentimentAnalyzerRequest as NewykSentimentAnalyzerRequest
+from api.schemas import NewykSentimentAnalyzerResponse as NewykSentimentAnalyzerResponse
+from api.sentiment_analyzer import NewykSentimentAnalyzer as NewykSentimentAnalyzer
 from fastapi.responses import FileResponse
 
 app = FastAPI()
@@ -14,6 +17,8 @@ parser = NewykParser()
 html_maker = NewykHTMLMaker()
 summarizer = NewykSummarizer()
 summarizer_response = summarizer.initialize()
+sentiment_analyzer = NewykSentimentAnalyzer()
+sentiment_analyzer_response = sentiment_analyzer.initialize()
 
 @app.get("/")
 async def start():
@@ -43,3 +48,36 @@ async def summarize(request: NewykSummarizerRequest) -> NewykSummarizerResponse:
         return NewykSummarizerResponse(summary=summarizer_response)
     response = summarizer(request.text)
     return NewykSummarizerResponse(summary=response)
+
+@app.post("/sentiment_analyze/")
+async def sentiment_analyze(request: NewykSentimentAnalyzerRequest) -> NewykSentimentAnalyzerResponse:
+    response = sentiment_analyzer(request.text)
+    return NewykSentimentAnalyzerResponse(sentiment=response)
+
+@app.post("/get_short_news/")
+async def get_short_news(request: NewykTodayNewsRequest) -> NewykTodayNewsResponse:
+    response = parser(request.url)
+    if "Error" in response:
+        return NewykTodayNewsResponse(news=response)
+    
+    for new in response:
+        text = new["text"]
+        summarized_text= summarizer(text)
+        new["text"] = summarized_text
+        sentiment = sentiment_analyzer(summarized_text)
+        
+        negative = sentiment["negative"]
+        positive = sentiment["positive"]
+        neutral = sentiment["neutral"]
+
+        emoji = ""
+        if negative > positive and negative > neutral:
+            emoji = "😠" 
+        elif positive > negative and positive > neutral:
+            emoji = "😊" 
+        else:
+            emoji = "😐"
+            
+        new["sentiment"] = emoji
+        
+    return NewykTodayNewsResponse(news=response)
